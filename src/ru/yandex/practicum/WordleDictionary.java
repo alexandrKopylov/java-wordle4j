@@ -1,5 +1,6 @@
 package ru.yandex.practicum;
 
+import java.nio.file.Path;
 import java.util.List;
 
 /*
@@ -10,5 +11,21 @@ import java.util.List;
 public class WordleDictionary {
 
     private List<String> words;
+    private Path pathLog;
+
+
+    public WordleDictionary(List<String> words, Path pathLog) {
+        this.words = words;
+        this.pathLog = pathLog;
+    }
+
+    public List<String> getWords() {
+        return words;
+    }
+
+    public void setWords(List<String> words) {
+        this.words = words;
+    }
+
 
 }
