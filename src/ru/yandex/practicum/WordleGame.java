@@ -1,10 +1,7 @@
 package ru.yandex.practicum;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 /*
 в этом классе хранится словарь и состояние игры
@@ -22,7 +19,7 @@ public class WordleGame {
 
     private String mysteriousWord;
     private Path pathLog;
-    private String answer = "^^^^^";
+    private String answerTemplate = "^^^^^";
     private String tryingGuessWord;
     private String previousTryingGuessWord;
     private int steps = 0;
@@ -30,6 +27,7 @@ public class WordleGame {
     private Random random = new Random();
     private Scanner scanner = new Scanner(System.in);
     private List<String> wordsPlayerEntered = new ArrayList<>();
+    private Set<Character> charactersNoInMysteriousWord = new HashSet<>();
 
 
     public WordleGame(Path pathLog, WordleDictionary dictionary) {
@@ -39,7 +37,7 @@ public class WordleGame {
 
     public void run() {
         mysteriousWord = guessWord();
-        System.out.println("Компьютер загадал слово из 5 букв " + mysteriousWord);
+        System.out.println("Компьютер загадал слово из 5 букв " + mysteriousWord  );
         System.out.println("Чтобы отгадать слово у Вас есть 6 попыток.");
         boolean computerWin = false;
         boolean playerWin = false;
@@ -67,7 +65,7 @@ public class WordleGame {
             if (playerWin) {
                 System.out.println("Вы угадали слово");
             } else {
-                System.out.println(answer);
+                System.out.println(answerTemplate);
             }
             if (steps == 6) {
                 computerWin = true;
@@ -91,24 +89,57 @@ public class WordleGame {
             System.out.println("слово должно быть 5-ти букв");
             return false;
         }
+        if (!checkWordtemplate(answerTemplate, tryingGuessWord, previousTryingGuessWord)) {
+            System.out.println("слово должно соответсвовать предыдущему шаблону " + answerTemplate);
+            return false;
+        }
+
+
         return true;
     }
+
+    private boolean checkWordtemplate(String answerTemplate, String tryingGuessWord, String previousTryingGuessWord) {
+        if (answerTemplate.equals("^^^^^")){
+            return  true;
+        }
+
+        for (int i = 0; i < answerTemplate.length(); i++) {
+            if (answerTemplate.charAt(i) == '+') {
+                char simbolTryingGuessWord = tryingGuessWord.charAt(i);
+                char simbolPreviousTryingGuessWord = previousTryingGuessWord.charAt(i);
+                if (simbolTryingGuessWord != simbolPreviousTryingGuessWord) {
+                    return false;
+                }
+            } else if (answerTemplate.charAt(i) == '^') {
+                if (!tryingGuessWord.contains(String.valueOf(previousTryingGuessWord.charAt(i)))) {
+                    return false;
+                }
+            }
+        }
+        for (Character simbol : charactersNoInMysteriousWord){
+          if ( tryingGuessWord.contains(String.valueOf(simbol))){
+              return false;
+          }
+        }
+        return true;
+    }
+
 
     private String wordComputer() {
         List<String> newListWord = new ArrayList<>();
         String word;
-        if (answer.equals("^^^^^") || answer.equals("-----")) {
+        if (answerTemplate.equals("^^^^^") || answerTemplate.equals("-----")) {
             word = guessWord();
         } else {
             for (int i = 0; i < dictionary.getWords().size(); i++) {
-                if (answer.charAt(0) == '+') {
+                if (answerTemplate.charAt(0) == '+') {
                     char simbolDictionaryWord = dictionary.getWords().get(i).charAt(0);
                     char simbolMysteriousWord = mysteriousWord.charAt(0);
                     if (simbolDictionaryWord != simbolMysteriousWord) {
                         continue;
                     }
                 }
-                if (answer.charAt(1) == '+') {
+                if (answerTemplate.charAt(1) == '+') {
                     char simbolDictionaryWord = dictionary.getWords().get(i).charAt(1);
                     char simbolMysteriousWord = mysteriousWord.charAt(1);
                     if (simbolDictionaryWord != simbolMysteriousWord) {
@@ -116,7 +147,7 @@ public class WordleGame {
                     }
                 }
 
-                if (answer.charAt(2) == '+') {
+                if (answerTemplate.charAt(2) == '+') {
                     char simbolDictionaryWord = dictionary.getWords().get(i).charAt(2);
                     char simbolMysteriousWord = mysteriousWord.charAt(2);
                     if (simbolDictionaryWord != simbolMysteriousWord) {
@@ -124,46 +155,58 @@ public class WordleGame {
                     }
                 }
 
-                if (answer.charAt(3) == '+') {
+                if (answerTemplate.charAt(3) == '+') {
                     char simbolDictionaryWord = dictionary.getWords().get(i).charAt(3);
                     char simbolMysteriousWord = mysteriousWord.charAt(3);
                     if (simbolDictionaryWord != simbolMysteriousWord) {
                         continue;
                     }
                 }
-                if (answer.charAt(4) == '+') {
+                if (answerTemplate.charAt(4) == '+') {
                     char simbolDictionaryWord = dictionary.getWords().get(i).charAt(4);
                     char simbolMysteriousWord = mysteriousWord.charAt(4);
                     if (simbolDictionaryWord != simbolMysteriousWord) {
                         continue;
                     }
                 }
-                if (answer.charAt(0) == '^') {
+                if (answerTemplate.charAt(0) == '^') {
                     if (!dictionary.getWords().get(i).contains(String.valueOf(previousTryingGuessWord.charAt(0)))) {
                         continue;
                     }
                 }
-                if (answer.charAt(1) == '^') {
+                if (answerTemplate.charAt(1) == '^') {
                     if (!dictionary.getWords().get(i).contains(String.valueOf(previousTryingGuessWord.charAt(1)))) {
                         continue;
                     }
                 }
-                if (answer.charAt(2) == '^') {
+                if (answerTemplate.charAt(2) == '^') {
                     if (!dictionary.getWords().get(i).contains(String.valueOf(previousTryingGuessWord.charAt(2)))) {
                         continue;
                     }
                 }
-                if (answer.charAt(3) == '^') {
+                if (answerTemplate.charAt(3) == '^') {
                     if (!dictionary.getWords().get(i).contains(String.valueOf(previousTryingGuessWord.charAt(3)))) {
                         continue;
                     }
                 }
-                if (answer.charAt(4) == '^') {
+                if (answerTemplate.charAt(4) == '^') {
                     if (!dictionary.getWords().get(i).contains(String.valueOf(previousTryingGuessWord.charAt(4)))) {
                         continue;
                     }
                 }
                 String str = dictionary.getWords().get(i);
+
+                boolean isSimbolContainsInstr = false;
+                for (Character sinbol : charactersNoInMysteriousWord){
+                    if (str.contains(String.valueOf(sinbol))) {
+                        isSimbolContainsInstr =true;
+                        break;
+                    }
+                }
+                if (isSimbolContainsInstr){
+                    continue;
+                }
+
                 newListWord.add(str);
             }
             dictionary.setWords(newListWord);
@@ -173,11 +216,12 @@ public class WordleGame {
         return word;
     }
 
+
     private boolean checkWordPlayer() {
         if (tryingGuessWord.equals(mysteriousWord)) {
             return true;
         }
-        answer = checkEachLetter();
+        answerTemplate = checkEachLetter();
         return false;
     }
 
@@ -191,6 +235,7 @@ public class WordleGame {
                 chars[i] = '^';
             } else {
                 chars[i] = '-';
+                charactersNoInMysteriousWord.add(arrayChar[i]);
             }
         }
         return String.valueOf(chars);
@@ -200,9 +245,9 @@ public class WordleGame {
         String word;
         int size = dictionary.getWords().size();
         while (true) {
-            int indexWord = random.nextInt(0, size );
+            int indexWord = random.nextInt(0, size);
             word = dictionary.getWords().get(indexWord);
-            if (!wordsPlayerEntered.contains(word)){
+            if (!wordsPlayerEntered.contains(word)) {
                 break;
             }
         }
