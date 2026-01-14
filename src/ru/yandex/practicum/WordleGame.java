@@ -1,5 +1,6 @@
 package ru.yandex.practicum;
 
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -18,73 +19,56 @@ import java.util.*;
 public class WordleGame {
 
     private String mysteriousWord;
-    private Path pathLog;
+    private PrintWriter log;
     private String answerTemplate = "^^^^^";
     private String tryingGuessWord;
     private String previousTryingGuessWord;
-    private int steps = 0;
     private WordleDictionary dictionary;
-    private Random random = new Random();
-    private Scanner scanner = new Scanner(System.in);
-    private List<String> wordsPlayerEntered = new ArrayList<>();
     private Set<Character> charactersNoInMysteriousWord = new HashSet<>();
 
 
-    public WordleGame(Path pathLog, WordleDictionary dictionary) {
-        this.pathLog = pathLog;
+    public WordleGame(WordleDictionary dictionary, PrintWriter log) {
         this.dictionary = dictionary;
+        this.log = log;
     }
 
-    public void run() {
-        mysteriousWord = guessWord();
-        System.out.println("Компьютер загадал слово из 5 букв " + mysteriousWord);
-        System.out.println("Чтобы отгадать слово у Вас есть 6 попыток.");
-        boolean computerWin = false;
-        boolean playerWin = false;
-
-        while (!computerWin && !playerWin) {
-            ++steps;
-            boolean validWord = false;
-
-            while (!validWord) {
-                System.out.println();
-                System.out.println(steps + "-я  попытка, введите слово  (ENTER - подсказка компьютера, exit - выход из игры)  ");
-                tryingGuessWord = scanner.nextLine();
-
-                if (tryingGuessWord.equalsIgnoreCase("exit")) {
-                    System.out.println("Выход");
-                    System.exit(0);
-                } else if (tryingGuessWord.isEmpty()) {
-                    tryingGuessWord = wordComputer();
-                    System.out.println("(подсказка)");
-                    System.out.println(tryingGuessWord);
-                }
-                validWord = checkValidWord();
-            }
-
-            playerWin = checkPlayerWin();
-            if (playerWin) {
-                System.out.println("Вы угадали слово");
-            } else {
-                System.out.println(answerTemplate);
-            }
-            if (steps == 6 && !playerWin) {
-                computerWin = true;
-                System.out.println("Попытки закончились  :( ");
-            }
-            previousTryingGuessWord = tryingGuessWord;
-            wordsPlayerEntered.add(tryingGuessWord);
-        }
-
-        if (playerWin) {
-            System.out.println("\nВы выиграли !!!");
-        } else {
-            System.out.println("\nВы не угодали слово за 6 попыток.");
-            System.out.println("загаданное слово было -> " + mysteriousWord);
-        }
+    public String getMysteriousWord() {
+        return mysteriousWord;
     }
 
-    private boolean checkValidWord() {
+    public void setMysteriousWord(String mysteriousWord) {
+        this.mysteriousWord = mysteriousWord;
+    }
+
+    public String getAnswerTemplate() {
+        return answerTemplate;
+    }
+
+     public String getTryingGuessWord() {
+        return tryingGuessWord;
+    }
+
+    public void setTryingGuessWord(String tryingGuessWord) {
+        this.tryingGuessWord = tryingGuessWord;
+    }
+
+
+    public void setPreviousTryingGuessWord(String previousTryingGuessWord) {
+        this.previousTryingGuessWord = previousTryingGuessWord;
+    }
+
+
+
+    public WordleDictionary getDictionary() {
+        return dictionary;
+    }
+
+
+
+
+
+
+    public boolean checkValidWord() {
         if (tryingGuessWord.length() != 5) {
             System.out.println("слово должно быть из 5-ти букв");
             return false;
@@ -133,12 +117,11 @@ public class WordleGame {
         return true;
     }
 
-
-    private String wordComputer() {
+    public String hintWordComputer() {
         List<String> newListWord = new ArrayList<>();
         String word;
         if (answerTemplate.equals("^^^^^")) {
-            word = guessWord();
+            word = dictionary.randomWord();
         } else {
             for (int i = 0; i < dictionary.getWords().size(); i++) {
                 if (checkWordtemplate(answerTemplate, dictionary.getWords().get(i), previousTryingGuessWord)) {
@@ -147,13 +130,12 @@ public class WordleGame {
             }
             dictionary.setWords(newListWord);
             // System.out.println("список слов = " + newListWord.size());
-            word = guessWord();
+            word = dictionary.randomWord();
         }
         return word;
     }
 
-
-    private boolean checkPlayerWin() {
+    public boolean checkPlayerWin() {
         if (tryingGuessWord.equals(mysteriousWord)) {
             return true;
         }
@@ -177,16 +159,5 @@ public class WordleGame {
         return String.valueOf(chars);
     }
 
-    private String guessWord() {
-        String word;
-        int size = dictionary.getWords().size();
-        while (true) {
-            int indexWord = random.nextInt(0, size);
-            word = dictionary.getWords().get(indexWord);
-            if (!wordsPlayerEntered.contains(word)) {
-                break;
-            }
-        }
-        return word;
-    }
+
 }

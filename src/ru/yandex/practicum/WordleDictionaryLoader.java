@@ -12,37 +12,32 @@ import java.util.List;
     на выходе должен быть класс WordleDictionary
  */
 public class WordleDictionaryLoader {
-    private final int numberLettersInWord;
-    private final Path pathFileDictionary;
-    private final Path pathLog;
+    private  int numberLettersInWord;
+    private  PrintWriter log;
 
-    public WordleDictionaryLoader(int numberLettersInWord, Path pathFileDictionary, Path pathLog) {
+    public WordleDictionaryLoader( PrintWriter log , int numberLettersInWord) {
         this.numberLettersInWord = numberLettersInWord;
-        this.pathFileDictionary = pathFileDictionary;
-        this.pathLog = pathLog;
+        this.log = log;
     }
 
-    public List<String> read() {
-        List<String> result = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(new FileInputStream(pathFileDictionary.toFile()), StandardCharsets.UTF_8))) {
+    public WordleDictionary load(String file) throws IOException {
+        log.println("Загрузка словаря из " + file);
+        List<String> words = new ArrayList<>();
+
+        try (BufferedReader reader =
+                     new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             String line;
-            while ((line = br.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 if (line.trim().length() == numberLettersInWord ) {
-                    result.add(line.toLowerCase().replace("ё","е"));
+                    words.add(line.toLowerCase().replace("ё","е"));
                 }
             }
-        } catch (IOException e) {
-            try (FileWriter fileWriter = new FileWriter(pathLog.toFile()); ){
-                fileWriter.write("Произошла ошибка во время чтения файла.\n");
-                fileWriter.write (e.getMessage());
-
-            } catch (IOException ex) {
-                System.out.println("не получилось записать log в log-файл");
-            }
         }
-        return result;
+        log.println("Cловарь из 5 букв, размер = " + words.size() + " слов");
+
+        if (words.isEmpty()) {
+            throw new DictionaryException("Словарь  из 5 букв пуст");
+        }
+        return new WordleDictionary(words, log);
     }
-
-
 }
