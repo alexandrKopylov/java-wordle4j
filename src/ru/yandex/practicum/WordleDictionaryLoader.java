@@ -34,7 +34,6 @@ public class WordleDictionaryLoader {
             }
         }
         log.println("Cловарь из 5 букв, размер = " + words.size() + " слов");
-
         if (words.isEmpty()) {
             throw new DictionaryException("Словарь  из 5 букв пуст");
         }

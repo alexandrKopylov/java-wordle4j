@@ -68,22 +68,18 @@ public class WordleGame {
 
 
 
-    public boolean checkValidWord() {
+    public boolean checkValidWord() throws InputExeption {
         if (tryingGuessWord.length() != 5) {
-            System.out.println("слово должно быть из 5-ти букв");
-            return false;
+            throw  new InputExeption("Ошибка: слово должно быть из 5-ти букв");
         }
         if (tryingGuessWord.matches(".*[a-zA-Z].*")) {
-            System.out.println("в слове не должно быть английских букв");
-            return false;
+            throw new InputExeption("Ошибка: в слове не должно быть английских букв");
         }
         if (!checkWordInDictionary()) {
-            System.out.println("слово должно быть из словаря");
-            return false;
+            throw new InputExeption("Ошибка: слово должно быть из словаря");
         }
         if (!checkWordtemplate(answerTemplate, tryingGuessWord, previousTryingGuessWord)) {
-            System.out.println("слово должно соответсвовать предыдущему шаблону " + answerTemplate);
-            return false;
+            throw  new InputExeption( "Ошибка: слово должно соответсвовать предыдущему шаблону " + answerTemplate);
         }
         return true;
     }
@@ -109,6 +105,7 @@ public class WordleGame {
                 }
             }
         }
+
         for (Character simbol : charactersNoInMysteriousWord) {
             if (tryingGuessWord.contains(String.valueOf(simbol))) {
                 return false;
@@ -129,7 +126,7 @@ public class WordleGame {
                 }
             }
             dictionary.setWords(newListWord);
-            // System.out.println("список слов = " + newListWord.size());
+             log.println("список слов в словаре после фильтрции = " + newListWord.size());
             word = dictionary.randomWord();
         }
         return word;
@@ -156,6 +153,8 @@ public class WordleGame {
                 charactersNoInMysteriousWord.add(arrayChar[i]);
             }
         }
+        log.println("список букв которых не должно быть в слове:" );
+        log.println(charactersNoInMysteriousWord);
         return String.valueOf(chars);
     }
 
