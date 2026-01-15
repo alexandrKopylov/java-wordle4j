@@ -15,11 +15,13 @@ public class WordleDictionary {
     private List<String> words;
     private PrintWriter log;
     private Random random = new Random();
-    private List<String> wordsPlayerEntered = new ArrayList<>();
+    private List<String> wordsPlayerEntered ;
 
     public WordleDictionary(List<String> words, PrintWriter log) {
         this.words = words;
         this.log = log;
+        wordsPlayerEntered = new ArrayList<>();
+
     }
 
     public List<String> getWords() {

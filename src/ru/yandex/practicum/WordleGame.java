@@ -36,6 +36,14 @@ public class WordleGame {
         return mysteriousWord;
     }
 
+    public Set<Character> getCharactersNoInMysteriousWord() {
+        return charactersNoInMysteriousWord;
+    }
+
+    public void setAnswerTemplate(String answerTemplate) {
+        this.answerTemplate = answerTemplate;
+    }
+
     public void setMysteriousWord(String mysteriousWord) {
         this.mysteriousWord = mysteriousWord;
     }
@@ -52,21 +60,13 @@ public class WordleGame {
         this.tryingGuessWord = tryingGuessWord;
     }
 
-
     public void setPreviousTryingGuessWord(String previousTryingGuessWord) {
         this.previousTryingGuessWord = previousTryingGuessWord;
     }
 
-
-
     public WordleDictionary getDictionary() {
         return dictionary;
     }
-
-
-
-
-
 
     public boolean checkValidWord() throws InputExeption {
         if (tryingGuessWord.length() != 5) {
@@ -88,7 +88,7 @@ public class WordleGame {
         return dictionary.getWords().contains(tryingGuessWord);
     }
 
-    private boolean checkWordtemplate(String answerTemplate, String tryingGuessWord, String previousTryingGuessWord) {
+    public boolean checkWordtemplate(String answerTemplate, String tryingGuessWord, String previousTryingGuessWord) {
         if (answerTemplate.equals("^^^^^")) {
             return true;
         }
@@ -140,7 +140,7 @@ public class WordleGame {
         return false;
     }
 
-    private String checkEachLetter() {
+    public String checkEachLetter() {
         char[] arrayChar = tryingGuessWord.toCharArray();
         char[] chars = new char[arrayChar.length];
         for (int i = 0; i < arrayChar.length; i++) {
@@ -157,6 +157,4 @@ public class WordleGame {
         log.println(charactersNoInMysteriousWord);
         return String.valueOf(chars);
     }
-
-
 }
