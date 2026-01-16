@@ -36,6 +36,10 @@ public class WordleGame {
         return mysteriousWord;
     }
 
+    public void setCharactersNoInMysteriousWord(Set<Character> charactersNoInMysteriousWord) {
+        this.charactersNoInMysteriousWord = charactersNoInMysteriousWord;
+    }
+
     public Set<Character> getCharactersNoInMysteriousWord() {
         return charactersNoInMysteriousWord;
     }
@@ -84,7 +88,7 @@ public class WordleGame {
         return true;
     }
 
-    private boolean checkWordInDictionary() {
+    public boolean checkWordInDictionary() {
         return dictionary.getWords().contains(tryingGuessWord);
     }
 

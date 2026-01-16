@@ -7,35 +7,33 @@ import org.junit.jupiter.api.Test;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class WordleTest {
-    private  PrintWriter log;
+    private PrintWriter log;
     private WordleDictionary dictionary;
-    private  WordleGame game;
+    private WordleGame game;
     private StringWriter stringWriter;
-
 
     @BeforeEach
     void settingGame() {
-
-        // Настраиваем логгер для проверки вывода
         stringWriter = new StringWriter();
         log = new PrintWriter(stringWriter);
-
         List<String> wordList = Arrays.asList(
                 "квота", "злюка", "лапка", "накал", "лежак", "мялка"
         );
-        dictionary = new WordleDictionary(wordList,log);
+        dictionary = new WordleDictionary(wordList, log);
         game = new WordleGame(dictionary, log);
         game.setMysteriousWord("лежак");
     }
 
-   // WordleDictionary
+    // WordleDictionary
     @Test
-     void testRandomWordReturnsValidWord() {
+    void testRandomWordReturnsValidWord() {
         String result = dictionary.randomWord();
         assertTrue(dictionary.getWords().contains(result));
     }
@@ -48,6 +46,7 @@ class WordleTest {
         assertEquals("+++++", result);
         assertTrue(stringWriter.toString().contains("список букв которых не должно быть в слове:"));
     }
+
     @Test
     void testCheckEachLetter_LetterInWrongPosition() {
         game.setTryingGuessWord("лояка");
@@ -57,12 +56,12 @@ class WordleTest {
         assertEquals("+--^^", result);
         assertTrue(game.getCharactersNoInMysteriousWord().contains('о'));
         assertTrue(game.getCharactersNoInMysteriousWord().contains('я'));
-       assertEquals(2,game.getCharactersNoInMysteriousWord().size());
+        assertEquals(2, game.getCharactersNoInMysteriousWord().size());
     }
+
     @Test
     void testCheckEachLetter_NoMatch() {
         game.setTryingGuessWord("вишня");
-
         String result = game.checkEachLetter();
         assertEquals("-----", result);
         assertTrue(game.getCharactersNoInMysteriousWord().containsAll(
@@ -83,16 +82,16 @@ class WordleTest {
         boolean result = game.checkPlayerWin();
         assertEquals(false, result);
     }
+
     @Test
     void testHintWordComputer_FirstTry() {
         game.setAnswerTemplate("^^^^^");
         String hint = game.hintWordComputer();
         assertTrue(dictionary.getWords().contains(hint));
     }
+
     @Test
     void testHintWordComputer_SecondTry() {
-        //лежак
-      //  "квота", "злюка", "лапка", "накал", "лежак", "мялка"
         game.setAnswerTemplate("+----");
         game.setPreviousTryingGuessWord("лотус");
         String hint = game.hintWordComputer();
@@ -102,12 +101,91 @@ class WordleTest {
     }
 
     @Test
-   void testCheckWordtemplate_FirstTry () {
+    void testCheckWordtemplate_FirstTryValid() {
         assertTrue(game.checkWordtemplate("^^^^^", "злюка", null));
     }
-//    @Test
-//    void testCheckWordtemplate_SecondTry () {
-//        assertTrue(game.checkWordtemplate("^^^^^", "злюка", null));
-//    }
+
+    @Test
+    void testCheckWordtemplate_SecondTryValid() {
+        Set<Character> characterSet = new HashSet<>();
+        characterSet.addAll(List.of('з', 'ю'));
+        game.setCharactersNoInMysteriousWord(characterSet);
+        assertTrue(game.checkWordtemplate("-^-^^", "мялка", "злюка"));
+    }
+
+    @Test
+    void testCheckWordtemplate_ThirdTryNoValid() {
+        Set<Character> characterSet = new HashSet<>();
+        characterSet.addAll(List.of('з', 'ю', 'м', 'я'));
+        game.setCharactersNoInMysteriousWord(characterSet);
+        // буквы м не должно быть в слове
+        assertFalse(game.checkWordtemplate("--^^^", "калым", "мялка"));
+    }
+
+    @Test
+    void testCheckWordtemplate_FourthTryNoValid() {
+        // буквы л  должно быть в слове в неопределенном месте
+        assertFalse(game.checkWordtemplate("--^^^", "актер", "мялка"));
+    }
+
+    @Test
+    void testCheckWordtemplate_FiveTryNoValid() {
+        // буквы л  должно быть точно на первом буквой, буквы к а  - должны присутвовать в слове
+        assertFalse(game.checkWordtemplate("+^-^^", "накал", "лапка"));
+    }
+
+    @Test
+    void checkWordInDictionary_ReturnTrue() {
+        game.setTryingGuessWord("мялка");
+        assertTrue(game.checkWordInDictionary());
+    }
+
+    @Test
+    void checkWordInDictionary_ReturnFalse() {
+        game.setTryingGuessWord("бабка");
+        assertFalse(game.checkWordInDictionary());
+    }
+
+    @Test
+    void checkValidWord_ReturnTrue() throws InputExeption {
+        game.setTryingGuessWord("злюка");
+        game.setAnswerTemplate("--^^^");
+        game.setPreviousTryingGuessWord("мялка");
+        assertTrue(game.checkValidWord());
+    }
+
+    @Test
+    void checkValidWord_LongWordReturnInputExeption() throws InputExeption {
+        game.setTryingGuessWord("кузнец");
+        assertThrows(InputExeption.class, () -> {
+            game.checkValidWord();
+        });
+    }
+
+    @Test
+    void checkValidWord_WordContainsLatinSimbolReturnInputExeption() throws InputExeption {
+        game.setTryingGuessWord("fargo");
+        assertThrows(InputExeption.class, () -> {
+            game.checkValidWord();
+        });
+    }
+
+    @Test
+    void checkValidWord_WordNoDictionaryReturnInputExeption() throws InputExeption {
+        game.setTryingGuessWord("бабка");
+        assertThrows(InputExeption.class, () -> {
+            game.checkValidWord();
+        });
+    }
+
+    @Test
+    void checkValidWord_WordMatchPreviousPatternReturnInputExeption() throws InputExeption {
+        game.setTryingGuessWord("кочка");
+        game.setAnswerTemplate("--^^^");
+        game.setPreviousTryingGuessWord("мялка");
+        assertThrows(InputExeption.class, () -> {
+            game.checkValidWord();
+        });
+    }
 
 }
