@@ -23,7 +23,6 @@ public class WordleDictionaryLoader {
     public WordleDictionary load(String file) throws IOException {
         log.println("Загрузка словаря из " + file);
         List<String> words = new ArrayList<>();
-
         try (BufferedReader reader =
                      new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             String line;
