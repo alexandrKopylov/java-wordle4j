@@ -44,6 +44,7 @@ public class WordleDictionary {
                 break;
             }
         }
+
         return word;
     }
 }

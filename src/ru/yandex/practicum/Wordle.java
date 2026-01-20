@@ -1,5 +1,8 @@
 package ru.yandex.practicum;
 
+import ru.yandex.practicum.exceptions.DictionaryException;
+import ru.yandex.practicum.exceptions.WordleGameException;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -31,8 +34,8 @@ public class Wordle {
             Wordle wordle = new Wordle();
             wordle.run(game, log);
         } catch (IOException e) {
-            System.out.println("Ошибка IOException. " + e.getMessage());
-            log.println("Ошибка IOException. " + e.getMessage());
+            System.out.println(String.format("Ошибка IOException. %s", e.getMessage()));
+            log.println(String.format("Ошибка IOException. %s", e.getMessage()));
         } catch (DictionaryException e) {
             System.out.println(e.getMessage());
             log.println(e.getMessage());
@@ -50,7 +53,7 @@ public class Wordle {
     public void run(WordleGame game, PrintWriter log) {
 
         game.setMysteriousWord(game.getDictionary().randomWord());
-        log.println("Компьютер загадал слово из 5 букв -> " + game.getMysteriousWord());
+        log.println(String.format("загаданное слово  -> %s", game.getMysteriousWord()));
         System.out.println("Компьютер загадал слово из 5 букв ");
         System.out.println("Чтобы отгадать слово у Вас есть 6 попыток.");
         boolean computerWin = false;
@@ -59,12 +62,16 @@ public class Wordle {
         while (!computerWin && !playerWin) {
             ++steps;
             boolean validWord = false;
-
+            StringBuilder sb = new StringBuilder();
             while (!validWord) {
                 System.out.println();
-                System.out.println(steps + "-я  попытка, введите слово  (ENTER - подсказка компьютера, exit - выход из игры)  ");
+                sb.setLength(0);
+                sb.append(steps);
+                sb.append("-я  попытка, введите слово  (ENTER - подсказка компьютера, exit - выход из игры)  ");
+
+                System.out.println(sb.toString());
                 log.println();
-                log.println(steps + "-я  попытка ");
+                log.println(sb.toString());
                 game.setTryingGuessWord(scanner.nextLine());
 
                 if (game.getTryingGuessWord().equalsIgnoreCase("exit")) {
@@ -79,8 +86,11 @@ public class Wordle {
                 }
                 try {
                     validWord = game.checkValidWord();
-                    log.println("проверка слова игрока на валидность -> " + game.getTryingGuessWord());
-                } catch (InputExeption e) {
+                    sb.setLength(0);
+                    sb.append("проверка слова игрока на валидность -> ");
+                    sb.append(game.getTryingGuessWord());
+                    log.println(sb.toString());
+                } catch (WordleGameException e) {
                     log.println(e.getMessage());
                     System.out.println(e.getMessage());
                 }
@@ -110,8 +120,8 @@ public class Wordle {
             log.println("игрок выиграл");
         } else {
             System.out.println("\nВы не угодали слово за 6 попыток.");
-            System.out.println("загаданное слово было -> " + game.getMysteriousWord());
-            log.println("игрок не угадал слово -> " + game.getMysteriousWord());
+            System.out.println(String.format("загаданное слово было -> %s", game.getMysteriousWord()));
+            log.println(String.format("игрок не угадал слово -> %s", game.getMysteriousWord()));
         }
     }
 }

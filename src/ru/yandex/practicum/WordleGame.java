@@ -1,5 +1,10 @@
 package ru.yandex.practicum;
 
+import ru.yandex.practicum.exceptions.WordleEmptyCandidatesException;
+import ru.yandex.practicum.exceptions.WordleGameNoSuchWordException;
+import ru.yandex.practicum.exceptions.WordleGameWrongWordException;
+import ru.yandex.practicum.exceptions.WordleGameWrongWordLengthException;
+
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -71,18 +76,21 @@ public class WordleGame {
         return dictionary;
     }
 
-    public boolean checkValidWord() throws InputExeption {
+    public boolean checkValidWord() throws WordleGameWrongWordLengthException,
+            WordleGameWrongWordException,
+            WordleGameNoSuchWordException,
+            WordleEmptyCandidatesException {
         if (tryingGuessWord.length() != 5) {
-            throw new InputExeption("Ошибка: слово должно быть из 5-ти букв");
+            throw new WordleGameWrongWordLengthException("Ошибка: слово должно быть из 5-ти букв");
         }
         if (tryingGuessWord.matches(".*[a-zA-Z].*")) {
-            throw new InputExeption("Ошибка: в слове не должно быть английских букв");
+            throw new WordleGameWrongWordException("Ошибка: в слове не должно быть английских букв");
         }
         if (!checkWordInDictionary()) {
-            throw new InputExeption("Ошибка: слово должно быть из словаря");
+            throw new WordleGameNoSuchWordException("Ошибка: слово должно быть из словаря");
         }
         if (!checkWordtemplate(answerTemplate, tryingGuessWord, previousTryingGuessWord)) {
-            throw new InputExeption("Ошибка: слово должно соответсвовать предыдущему шаблону " + answerTemplate);
+            throw new WordleEmptyCandidatesException(String.format("Ошибка: слово должно соответсвовать предыдущему шаблону %s", answerTemplate));
         }
         return true;
     }
@@ -129,7 +137,7 @@ public class WordleGame {
                 }
             }
             dictionary.setWords(newListWord);
-            log.println("список слов в словаре после фильтрции = " + newListWord.size());
+            log.println(String.format("список слов в словаре после фильтрции = %d", newListWord.size()));
             word = dictionary.randomWord();
         }
         return word;

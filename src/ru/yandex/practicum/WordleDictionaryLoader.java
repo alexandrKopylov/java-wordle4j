@@ -1,5 +1,7 @@
 package ru.yandex.practicum;
 
+import ru.yandex.practicum.exceptions.DictionaryException;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ public class WordleDictionaryLoader {
     }
 
     public WordleDictionary load(String file) throws IOException {
-        log.println("Загрузка словаря из " + file);
+        log.println(String.format("Загрузка словаря из  %s" ,file));
         List<String> words = new ArrayList<>();
         try (BufferedReader reader =
                      new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
@@ -31,7 +33,7 @@ public class WordleDictionaryLoader {
                 }
             }
         }
-        log.println("Cловарь из 5 букв, размер = " + words.size() + " слов");
+        log.println(String.format("Cловарь из 5 букв, размер = %s слов" ,  words.size()));
         if (words.isEmpty()) {
             throw new DictionaryException("Словарь  из 5 букв пуст");
         }

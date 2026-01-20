@@ -1,8 +1,9 @@
 package ru.yandex.practicum;
 
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.exceptions.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -147,7 +148,7 @@ class WordleTest {
     }
 
     @Test
-    void checkValidWord_ReturnTrue() throws InputExeption {
+    void checkValidWord_ReturnTrue() throws WordleGameWrongWordException, WordleGameWrongWordLengthException, WordleGameNoSuchWordException, WordleEmptyCandidatesException {
         game.setTryingGuessWord("злюка");
         game.setAnswerTemplate("--^^^");
         game.setPreviousTryingGuessWord("мялка");
@@ -155,35 +156,35 @@ class WordleTest {
     }
 
     @Test
-    void checkValidWord_LongWordReturnInputExeption() throws InputExeption {
+    void checkValidWord_LongWordReturnInputExeption()   {
         game.setTryingGuessWord("кузнец");
-        assertThrows(InputExeption.class, () -> {
+        assertThrows(WordleGameException.class, () -> {
             game.checkValidWord();
         });
     }
 
     @Test
-    void checkValidWord_WordContainsLatinSimbolReturnInputExeption() throws InputExeption {
+    void checkValidWord_WordContainsLatinSimbolReturnInputExeption()  {
         game.setTryingGuessWord("fargo");
-        assertThrows(InputExeption.class, () -> {
+        assertThrows(WordleGameException.class, () -> {
             game.checkValidWord();
         });
     }
 
     @Test
-    void checkValidWord_WordNoDictionaryReturnInputExeption() throws InputExeption {
+    void checkValidWord_WordNoDictionaryReturnInputExeption()  {
         game.setTryingGuessWord("бабка");
-        assertThrows(InputExeption.class, () -> {
+        assertThrows(WordleGameException.class, () -> {
             game.checkValidWord();
         });
     }
 
     @Test
-    void checkValidWord_WordMatchPreviousPatternReturnInputExeption() throws InputExeption {
+    void checkValidWord_WordMatchPreviousPatternReturnInputExeption()  {
         game.setTryingGuessWord("кочка");
         game.setAnswerTemplate("--^^^");
         game.setPreviousTryingGuessWord("мялка");
-        assertThrows(InputExeption.class, () -> {
+        assertThrows(WordleGameException.class, () -> {
             game.checkValidWord();
         });
     }
