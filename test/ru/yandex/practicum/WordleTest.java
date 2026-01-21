@@ -74,14 +74,14 @@ class WordleTest {
     void testCheckPlayerWin_ExactMatch() {
         game.setTryingGuessWord("лежак");
         boolean result = game.checkPlayerWin();
-        assertTrue( result);
+        assertTrue(result);
     }
 
     @Test
     void testCheckPlayerWin_NoMatch() {
         game.setTryingGuessWord("злюка");
         boolean result = game.checkPlayerWin();
-        assertFalse( result);
+        assertFalse(result);
     }
 
     @Test
@@ -95,6 +95,8 @@ class WordleTest {
     void testHintWordComputer_SecondTry() {
         game.setAnswerTemplate("+----");
         game.setPreviousTryingGuessWord("лотус");
+
+        game.hintWordComputer();
         assertEquals(2, dictionary.getWords().size());
         assertTrue(dictionary.getWords().containsAll(
                 Arrays.asList("лапка", "лежак")));
@@ -155,7 +157,7 @@ class WordleTest {
     }
 
     @Test
-    void checkValidWord_LongWordReturnWordleGameException()   {
+    void checkValidWord_LongWordReturnWordleGameException() {
         game.setTryingGuessWord("кузнец");
         assertThrows(WordleGameException.class, () -> {
             game.checkValidWord();
@@ -163,7 +165,7 @@ class WordleTest {
     }
 
     @Test
-    void checkValidWord_WordContainsLatinSimbolReturnWordleGameException()  {
+    void checkValidWord_WordContainsLatinSimbolReturnWordleGameException() {
         game.setTryingGuessWord("fargo");
         assertThrows(WordleGameException.class, () -> {
             game.checkValidWord();
@@ -171,7 +173,7 @@ class WordleTest {
     }
 
     @Test
-    void checkValidWord_WordNoDictionaryReturnWordleGameException()  {
+    void checkValidWord_WordNoDictionaryReturnWordleGameException() {
         game.setTryingGuessWord("бабка");
         assertThrows(WordleGameException.class, () -> {
             game.checkValidWord();
@@ -179,7 +181,7 @@ class WordleTest {
     }
 
     @Test
-    void checkValidWord_WordMatchPreviousPatternReturnWordleGameException()  {
+    void checkValidWord_WordMatchPreviousPatternReturnWordleGameException() {
         game.setTryingGuessWord("кочка");
         game.setAnswerTemplate("--^^^");
         game.setPreviousTryingGuessWord("мялка");
