@@ -22,7 +22,7 @@ public class WordleDictionaryLoader {
     }
 
     public WordleDictionary load(String file) throws IOException {
-        log.println(String.format("Загрузка словаря из  %s" ,file));
+        log.println(String.format("Загрузка словаря из  %s", file));
         List<String> words = new ArrayList<>();
         try (BufferedReader reader =
                      new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
@@ -33,7 +33,7 @@ public class WordleDictionaryLoader {
                 }
             }
         }
-        log.println(String.format("Cловарь из 5 букв, размер = %s слов" ,  words.size()));
+        log.println(String.format("Cловарь из 5 букв, размер = %s слов", words.size()));
         if (words.isEmpty()) {
             throw new DictionaryException("Словарь  из 5 букв пуст");
         }
